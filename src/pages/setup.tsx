@@ -1,27 +1,126 @@
-import Head from "next/head";
-import React from "react";
-import MainNavbar from "@/components/MainNavbar";
+import { auth, firestore } from "@/firebase";
 import {
-  useInput,
   Button,
-  Input,
   Container,
+  Input,
+  Loading,
   Row,
-  Text,
   Spacer,
+  Text,
+  useInput,
 } from "@nextui-org/react";
-import { MdLockOutline, MdLockOpen } from "react-icons/md";
+import Head from "next/head";
+import React, { useState } from "react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { MdEmail, MdLock, MdPerson } from "react-icons/md";
+import { useRouter } from "next/router";
 
 export default function Feed() {
-  const { value, reset, bindings } = useInput("");
+  const router = useRouter();
+  const {
+    value: nameValue,
+    reset: resetNameField,
+    bindings: nameBindings,
+  } = useInput("");
+
+
+  const {
+    value: emailValue,
+    reset: resetEmailField,
+    bindings: emailBindings,
+  } = useInput("");
+
+  const {
+    value: passwordValue,
+    reset: resetPasswordField,
+    bindings: passwordBindings,
+  } = useInput("");
   const validateEmail = (value: string) => {
     return value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
   };
-  const helper = React.useMemo(() => {
-    if (!value) return { text: "" };
-    const isValid = validateEmail(value);
-    return { text: isValid ? "Valid Email" : "Enter a valid email" };
-  }, [value]);
+
+  const emailHelper = React.useMemo(() => {
+    if (!emailValue)
+      return {
+        text: "",
+        color: "",
+      };
+    const isValid = validateEmail(emailValue);
+    return {
+      text: isValid ? "" : "Enter a valid email",
+      color: isValid ? "success" : "error",
+    };
+  }, [emailValue]);
+
+  const nameHelper = React.useMemo(() => {
+    return {
+      text:
+        nameValue.length >= 3 || nameValue.length == 0
+          ? ""
+          : "Must be at least 3 characters",
+    };
+  }, [nameValue]);
+
+  const passwordHelper = React.useMemo(() => {
+    return {
+      text:
+        passwordValue.length >= 6 || passwordValue.length == 0
+          ? ""
+          : "Must be at least 6 characters",
+    };
+  }, [passwordValue]);
+
+  const loginHandler = () => {
+    setLoading(true);
+    auth
+      .createUserWithEmailAndPassword(emailValue, passwordValue)
+      .then((item) => {
+        if (item.user?.uid) {
+          uploadUserData(item.user?.uid)
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  function uploadUserData(uid: string) {
+    firestore
+      .collection("users")
+      .doc(uid).set({
+          fullName: nameValue,
+          avatarUrl: "https://evascursos.com.br/wp-content/uploads/2020/03/avatar-large-square.jpg"
+      })
+      .then((docRef) => {
+        Cleanup()
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
+  }
+
+  function Cleanup() {
+    resetNameField()
+    resetEmailField()
+    resetPasswordField()
+    setLoading(false)
+
+    router.push('/feed')
+
+  }
+
+  const [loading, setLoading] = useState(false);
+
+  function inputsValid(): boolean {
+    if (loading) {
+      return false;
+    } else if ((emailHelper.color == "success" && passwordValue.length >= 6 && nameValue.length >= 3)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   return (
     <>
       <Head>
@@ -38,31 +137,63 @@ export default function Feed() {
               <Text h1>Create Account</Text>
             </Row>
             <Spacer y={1} />
-            <Input bordered fullWidth label="Name" placeholder="Name" />
-            <Spacer y={1.6} />
             <Input
-              {...bindings}
+              {...nameBindings}
+              clearable
               bordered
+              fullWidth
               shadow={false}
-              onClearClick={reset}
-              helperText={helper.text}
+              onClearClick={resetNameField}
+              color={"primary"}
+              helperColor={"error"}
+              helperText={nameHelper.text}
               type="email"
-              label="Email"
-              fullWidth
-              placeholder="Email"
+              labelPlaceholder="Name"
+              contentLeft={<MdPerson />}
+              aria-label="Name Field"
             />
-            <Spacer y={1.6} />
-            <Input.Password
+            <Spacer y={2.25} />
+            <Input
+              {...emailBindings}
+              clearable
               bordered
-              label="Password"
               fullWidth
-              placeholder="Password"
-              visibleIcon={<MdLockOpen fill="currentColor" />}
-              hiddenIcon={<MdLockOutline fill="currentColor" />}
+              shadow={false}
+              onClearClick={resetEmailField}
+              color={"primary"}
+              helperColor={"error"}
+              helperText={emailHelper.text}
+              type="email"
+              labelPlaceholder="Email"
+              contentLeft={<MdEmail />}
+              aria-label="Email Field"
             />
-            <Spacer y={1.7} />
+            <Spacer y={2.25} />
+            <Input.Password
+              {...passwordBindings}
+              clearable
+              bordered
+              fullWidth
+              shadow={false}
+              onClearClick={resetPasswordField}
+              aria-label="Password Field"
+              color="primary"
+              labelPlaceholder="Password"
+              helperText={passwordHelper.text}
+              helperColor="error"
+              visibleIcon={<HiEyeOff fill="currentColor" />}
+              hiddenIcon={<HiEye fill="currentColor" />}
+              contentLeft={<MdLock />}
+            />
+            <Spacer y={2.25} />
             <Row justify="center">
-              <Button>Sign Up</Button>
+              <Button shadow disabled={!inputsValid()} onPress={loginHandler}>
+                {loading ? (
+                  <Loading type="default" color="currentColor" size="sm" />
+                ) : (
+                  <>Sign Up</>
+                )}
+              </Button>
             </Row>
           </Container>
         </div>

@@ -18,8 +18,13 @@ import {
   Loading,
 } from "@nextui-org/react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase";
+import { auth, firestore } from "@/firebase";
 import { useRouter } from "next/router";
+
+interface User {
+  fullName: string;
+  avatarUrl?: string;
+}
 
 export default function MainNavbar() {
   const router = useRouter();
@@ -28,6 +33,23 @@ export default function MainNavbar() {
   const handler = () => setVisible(true);
 
   const [user] = useAuthState(auth);
+  const [userData, setUserData] = useState<User | null>(null);
+
+  const userDocRef = firestore
+    .collection("users")
+    .doc(auth.currentUser?.uid.toString());
+
+  if (user) {
+    userDocRef
+      .get()
+      .then((userDoc) => {
+        const userData = userDoc.data() as User;
+        setUserData(userData);
+      })
+      .catch((error) => {
+        console.error("Error getting document:", error);
+      });
+  }
 
   function signOut() {
     auth.signOut();
@@ -36,6 +58,7 @@ export default function MainNavbar() {
   return (
     <Navbar variant={"sticky"}>
       <Navbar.Brand>
+        <Navbar.Toggle showIn={"xs"} aria-label="toggle navigation" />
         <Link href={"/"} passHref legacyBehavior>
           <Row align="center">
             <MainLogo size={48} />
@@ -66,17 +89,35 @@ export default function MainNavbar() {
             <Row align="center">
               {user ? (
                 <>
-                  <Text b>{auth.currentUser?.email}</Text>
+                  <Text b>{userData?.fullName}</Text>
                   <Spacer x={0.45} />
                   <Dropdown.Trigger>
                     <Avatar
                       size="md"
-                      src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                      src={
+                        userData?.avatarUrl
+                          ? userData.avatarUrl
+                          : "https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                      }
                     />
                   </Dropdown.Trigger>
                 </>
               ) : (
-                <Button onPress={handler}>Login</Button>
+                <>
+                  {router.pathname != "/setup" ? (
+                    <Link href={"/setup"} passHref legacyBehavior>
+                      <Navbar.Link>
+                        Sign Up
+                      </Navbar.Link>
+                    </Link>
+                  ) : (
+                    <></>
+                  )}
+                  <Spacer x={0.5} />
+                  <Button auto onPress={handler}>
+                    Login
+                  </Button>
+                </>
               )}
               <Spacer x={0.45} />
             </Row>
@@ -95,7 +136,7 @@ export default function MainNavbar() {
                 Signed in as:
               </Text>
               <Text b color="inherit" css={{ d: "flex" }}>
-                {auth.currentUser?.email}
+                {userData?.fullName}
               </Text>
             </Dropdown.Item>
             <Dropdown.Item key="settings" withDivider>
@@ -111,6 +152,28 @@ export default function MainNavbar() {
           </Dropdown.Menu>
         </Dropdown>
       </Navbar.Content>
+      <Navbar.Collapse>
+        <Navbar.CollapseItem key={"home"}>
+          <Link color="inherit" href="/">
+            Home
+          </Link>
+        </Navbar.CollapseItem>
+        <Navbar.CollapseItem key={"feed"}>
+          <Link color="inherit" href="/feed">
+            Feed
+          </Link>
+        </Navbar.CollapseItem>
+        <Navbar.CollapseItem key={"incidents"}>
+          <Link color="inherit" href="/incidents">
+            Incidents
+          </Link>
+        </Navbar.CollapseItem>
+        <Navbar.CollapseItem key={"map"}>
+          <Link color="inherit" href="/map">
+            Map
+          </Link>
+        </Navbar.CollapseItem>
+      </Navbar.Collapse>
     </Navbar>
   );
 }
