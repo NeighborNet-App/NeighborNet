@@ -14,7 +14,6 @@ export default function Feed() {
       </Head>
       <main>
         <div>
-          <MainNavbar currentPage="map" />
           <Container xs>
             <Text>Hello Map</Text>
           </Container>

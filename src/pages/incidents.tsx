@@ -32,7 +32,6 @@ export default function Incidents() {
       </Head>
       <main>
         <div>
-          <MainNavbar currentPage="incidents" />
           <Container gap={28}>
             <Spacer y={1} />
             <Text h1>Recent Incidents</Text>
@@ -63,8 +62,8 @@ export default function Incidents() {
                   fullWidth
                   placeholder="Location"
                 />
-                <Input fullWidth label="Time" type="time" />
-                <Input label="Date" type="date" />
+                <Input bordered fullWidth label="Time" type="time" />
+                <Input bordered label="Date" type="date" />
               </Modal.Body>
             </Modal>
 

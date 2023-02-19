@@ -32,7 +32,6 @@ export default function Feed() {
       </Head>
       <main>
         <div>
-          <MainNavbar currentPage="setup" />
           <Container xs>
             <Spacer y={2} />
             <Row justify="center">

@@ -15,7 +15,6 @@ export default function Home() {
       </Head>
       <main>
         <div>
-          <MainNavbar currentPage="home" />
           <Container md>
             <Spacer y={2} />
             <Image

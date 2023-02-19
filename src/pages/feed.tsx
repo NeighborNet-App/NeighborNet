@@ -38,11 +38,10 @@ export default function Feed() {
       </Head>
       <main>
         <div>
-          <MainNavbar currentPage="feed" />
           <Container gap={28}>
             <Spacer y={1} />
             <Text h1>Neighborhood Feed</Text>
-            <Button auto color="primary" shadow onPress={handler}>
+            <Button auto color="primary" onPress={handler}>
               {" "}
               Create Event{" "}
             </Button>
@@ -69,8 +68,8 @@ export default function Feed() {
                   fullWidth
                   placeholder="Location"
                 />
-                <Input fullWidth label="Time" type="time" />
-                <Input label="Date" type="date" />
+                <Input bordered fullWidth label="Time" type="time" />
+                <Input bordered label="Date" type="date" />
               </Modal.Body>
             </Modal>
             <Spacer y={1} />
