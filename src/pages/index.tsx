@@ -1,8 +1,10 @@
 import Head from "next/head";
 import MainNavbar from "@/components/MainNavbar";
 import { Container, Row, Text, Spacer } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 
 export default function Home() {
+  const imageSize = 150;
   return (
     <>
       <Head>
@@ -14,9 +16,14 @@ export default function Home() {
       <main>
         <div>
           <MainNavbar currentPage="home" />
-          <Container >
+          <Container md>
+            <Spacer y={2} />
+            <Image width={imageSize} height={imageSize} src="logo.svg" alt="Main Logo" />
             <Row justify="center">
-              <Text>Hello World, This is in the center -_-</Text>
+              <Text h1>Welcome to NeighborNet</Text>
+            </Row>
+            <Row justify="center">
+              <Text size="$xl">{"Introducing our neighborhood social web app, the ultimate solution for keeping you in the loop on all the latest happenings in your local community. Our web app is the perfect tool for discovering new and exciting events taking place in your neighborhood, from parties and fundraisers to volunteer opportunities and community gatherings. We will keep you up to date on everything that is going on, so you never miss out on an opportunity to connect with your neighbors and make new friends. But that is not all, our web app also provides real-time updates on incidents and safety alerts in your area, so you can stay informed and stay safe. Use our web app today and start exploring all the exciting things happening in your community!"}</Text>
             </Row>
           </Container>
         </div>

@@ -32,7 +32,7 @@ export default function MainNavbar(props: MainNavbarProps) {
       <Navbar.Brand>
         <Link href={"/"} passHref legacyBehavior>
           <Row align="center">
-            <MainLogo />
+            <MainLogo size={48} />
             <Spacer x={0.33} />
             <Text b color="inherit" hideIn="xs">
               NeighborNet
@@ -74,7 +74,7 @@ export default function MainNavbar(props: MainNavbarProps) {
             onAction={(actionKey) => console.log({ actionKey })}>
             <Dropdown.Item key="profile" css={{ height: "$18" }}>
               <Text b color="inherit" css={{ d: "flex" }}>
-                Signed in as :
+                Signed in as:
               </Text>
               <Text b color="inherit" css={{ d: "flex" }}>
                 zoey@example.com
