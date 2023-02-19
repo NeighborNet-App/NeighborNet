@@ -1,5 +1,5 @@
 //this is what they type in for incidents
-type incident= {
+export type incident= {
     incidentType : string;
     location : string;
     description : string;

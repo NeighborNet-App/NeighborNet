@@ -1,5 +1,5 @@
 //this is what they type in for events
-type event = {
+export type event = {
     eventType: string;
     location: string;
     description: string;
