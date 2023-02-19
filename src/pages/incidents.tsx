@@ -10,8 +10,9 @@ import {
   Button,
   Modal,
 } from "@nextui-org/react";
-import { firestore } from "./../firebase";
 import { useState, useEffect } from "react";
+import { auth, firestore } from "@/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Incidents() {
   // For Popup
@@ -21,6 +22,8 @@ export default function Incidents() {
     setVisible(false);
     console.log("closed");
   };
+
+  const [user] = useAuthState(auth);
 
   return (
     <>
@@ -35,10 +38,15 @@ export default function Incidents() {
           <Container gap={28}>
             <Spacer y={1} />
             <Text h1>Recent Incidents</Text>
-            <Button auto color="primary" onPress={handler}>
-              {" "}
-              Report Incident{" "}
-            </Button>
+            {user ? (
+              <Button auto color="primary" onPress={handler}>
+                {" "}
+                Report Incident{" "}
+              </Button>
+            ) : (
+              <></>
+            )}
+
             <Modal
               closeButton
               blur

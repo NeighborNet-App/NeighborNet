@@ -1,4 +1,5 @@
 import "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 import firebase from "firebase";
 require("firebase/auth");
 

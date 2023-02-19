@@ -1,6 +1,5 @@
 import Head from "next/head";
 import React from "react";
-import MainNavbar from "@/components/MainNavbar";
 import {
   Input,
   Textarea,
@@ -11,15 +10,17 @@ import {
   Text,
   Spacer,
 } from "@nextui-org/react";
-import { firestore } from "./../firebase";
+import { auth, firestore } from "@/firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import FeedCard from "@/components/FeedCard";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Feed() {
   const feedRef = firestore.collection("feed");
-  const query = feedRef.orderBy("creationDate").limit(50);
+  const query = feedRef.orderBy("creationDate", "desc").limit(50);
 
   const [feedList] = useCollectionData(query, { idField: "id" });
+  const [user] = useAuthState(auth);
 
   // Popup
   const [visible, setVisible] = React.useState(false);
@@ -41,10 +42,15 @@ export default function Feed() {
           <Container gap={28}>
             <Spacer y={1} />
             <Text h1>Neighborhood Feed</Text>
-            <Button auto color="primary" onPress={handler}>
-              {" "}
-              Create Event{" "}
-            </Button>
+
+            {user ? (
+              <Button auto color="primary" onPress={handler}>
+                {" "}
+                New Post{" "}
+              </Button>
+            ) : (
+              <></>
+            )}
             <Modal
               closeButton
               blur
@@ -84,6 +90,7 @@ export default function Feed() {
                       description={item["description"]}
                       authorId={item["authorId"]}
                     />
+                    <Spacer y={1} />
                   </>
                 );
               })}

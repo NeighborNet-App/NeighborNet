@@ -17,6 +17,12 @@ import UserProfile from "./UserProfile";
 import FeedItem from "@/types/FeedItem";
 
 export default function FeedCard(props: FeedItem) {
+
+  function convertDate(input: number): string {
+    const date = new Date(input)
+    return (`${date.toLocaleDateString('en-us', { year:"numeric", month:"short", day:"numeric"})} • ${date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`)
+  }
+
   return (
     <Card>
       <Card.Header>
@@ -50,7 +56,7 @@ export default function FeedCard(props: FeedItem) {
           <Row>
             <Spacer x={0.5} />
             <Text css={{ opacity: "0.33" }} size={"$sm"} color="">
-              Feb 14 • 3:31 pm
+              {convertDate(props.creationDate)}
             </Text>
           </Row>
           <Button.Group color="primary" size="sm" flat>
