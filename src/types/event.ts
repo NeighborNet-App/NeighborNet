@@ -4,7 +4,4 @@ export type event = {
   location: string;
   description: string;
   time: string;
-  age_limit: string;
-  max_recipients: number;
-  cost: number;
 };
