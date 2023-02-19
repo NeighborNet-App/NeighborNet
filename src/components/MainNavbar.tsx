@@ -237,7 +237,7 @@ function LoginModal(props: LoginModalProps) {
         </Row>
         <Spacer y={1} />
         <Row justify={"center"}>
-          <Button disabled={!inputsValid()} onPress={loginHandler}>
+          <Button shadow disabled={!inputsValid()} onPress={loginHandler}>
             {loading ? (
               <Loading type="default" color="currentColor" size="sm" />
             ) : (
