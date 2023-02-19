@@ -1,32 +1,36 @@
 import MainLogo from "@/components/MainLogo";
 import Link from "next/link";
+import React from "react";
+import { MdLockOutline, MdLockOpen } from "react-icons/md";
+import { useState } from "react";
 import {
   Button,
+  Modal,
   Navbar,
   Text,
+  Input,
   Spacer,
   Dropdown,
   Avatar,
   Row,
+  useTheme,
 } from "@nextui-org/react";
+import { useTheme as useNextTheme } from "next-themes";
 
 interface MainNavbarProps {
   currentPage: string;
 }
 
 export default function MainNavbar(props: MainNavbarProps) {
-  const collapseItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log In",
-  ];
+  const { setTheme } = useNextTheme();
+  const { isDark, type } = useTheme();
+  // For Popup
+  const [visible, setVisible] = useState(false);
+  const handler = () => setVisible(true);
+  const closeHandler = () => {
+    setVisible(false);
+    console.log("closed");
+  };
   return (
     <Navbar variant={"sticky"}>
       <Navbar.Brand>
@@ -58,6 +62,41 @@ export default function MainNavbar(props: MainNavbarProps) {
         <Dropdown placement="bottom-right">
           <Navbar.Item>
             <Row align="center">
+              <Button size="xs" flat auto color="primary" onPress={handler}>
+                {" "}
+                Login{" "}
+              </Button>
+              <Modal
+                closeButton
+                blur
+                aria-labelledby="modal-title"
+                open={visible}
+                onClose={closeHandler}
+              >
+                <Modal.Header>
+                  <Text id="modal-title" size={18}>
+                    {" "}
+                    Login{" "}
+                  </Text>
+                </Modal.Header>
+                <Modal.Body>
+                  <Input
+                    bordered
+                    color="primary"
+                    fullWidth
+                    placeholder="Email"
+                  />
+                  <Input.Password
+                    bordered
+                    color="primary"
+                    placeholder="Password"
+                    visibleIcon={<MdLockOpen fill="currentColor" />}
+                    hiddenIcon={<MdLockOutline fill="currentColor" />}
+                  />
+                  <Button>Login</Button>
+                </Modal.Body>
+              </Modal>
+              <Spacer x={0.45} />
               <Text b>William Howard </Text>
               <Spacer x={0.45} />
               <Dropdown.Trigger>
@@ -71,7 +110,8 @@ export default function MainNavbar(props: MainNavbarProps) {
           <Dropdown.Menu
             aria-label="User menu actions"
             color="primary"
-            onAction={(actionKey) => console.log({ actionKey })}>
+            onAction={(actionKey) => console.log({ actionKey })}
+          >
             <Dropdown.Item key="profile" css={{ height: "$18" }}>
               <Text b color="inherit" css={{ d: "flex" }}>
                 Signed in as:
@@ -93,18 +133,6 @@ export default function MainNavbar(props: MainNavbarProps) {
           </Dropdown.Menu>
         </Dropdown>
       </Navbar.Content>
-      <Navbar.Collapse>
-        {collapseItems.map((item, index) => (
-          <Navbar.CollapseItem
-            key={item}
-            activeColor="primary"
-            css={{
-              color: index === collapseItems.length - 1 ? "$error" : "",
-            }}
-            isActive={index === 2}
-          ></Navbar.CollapseItem>
-        ))}
-      </Navbar.Collapse>
     </Navbar>
   );
 }

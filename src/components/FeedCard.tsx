@@ -7,10 +7,16 @@ import {
   Spacer,
   Col,
 } from "@nextui-org/react";
-import { MdLocationOn, MdCalendarToday, MdThumbUp, MdThumbDown } from "react-icons/md";
+import {
+  MdLocationOn,
+  MdCalendarToday,
+  MdThumbUp,
+  MdThumbDown,
+} from "react-icons/md";
 import UserProfile from "./UserProfile";
+import FeedItem from "@/types/FeedItem";
 
-export default function FeedCard() {
+export default function FeedCard(props: FeedItem) {
   return (
     <Card>
       <Card.Header>
@@ -21,45 +27,39 @@ export default function FeedCard() {
         <Container>
           <Col>
             <Text h3 b>
-              Post Title
+              {props.title}
             </Text>
-            <Spacer y={-.5} />
             <Row align="center">
               <MdLocationOn />
               <Spacer x={0.35} />
               <Text b>123 Testing Avenue, Santa Monica</Text>
             </Row>
-            <Spacer y={0} />
             <Row align="center">
               <MdCalendarToday />
               <Spacer x={0.35} />
               <Text>Feb 28 • 4:00 PM</Text>
             </Row>
-            <Spacer y={.4} />
-            <Text>
-              Dolore amet irure do proident commodo est aliqua consectetur
-              deserunt. Dolore duis quis sunt voluptate esse consectetur aliqua
-              adipisicing. Reprehenderit deserunt irure in. Mollit amet non
-              deserunt eiusmod. Labore commodo velit dolore culpa quis fugiat.
-              Excepteur magna ea tempor aliqua ut consequat excepteur cillum.
-              Labore ullamco duis mollit exercitation nulla aliqua nisi.
-            </Text>
-            {/* <Spacer y = {.2} /> */}
-            {/* <Text> Age : ____, Recipients ___/____, Cost ___ </Text> */}
+            <Spacer y={0.4} />
+            <Text>{props.description}</Text>
           </Col>
         </Container>
       </Card.Body>
       <Card.Divider />
       <Card.Footer>
         <Row align="center" justify="space-between">
-          <Row> Feb 14 </Row>
-          {/* <Button.Group size = "sm" disabled> */}
-          {/* <Button>YES</Button> */}
-          {/* <Button>NO</Button> */}
-          {/* </Button.Group> */}
+          <Row>
+            <Spacer x={0.5} />
+            <Text css={{ opacity: "0.33" }} size={"$sm"} color="">
+              Feb 14 • 3:31 pm
+            </Text>
+          </Row>
           <Button.Group color="primary" size="sm" flat>
-            <Button><MdThumbDown /></Button>
-            <Button><MdThumbUp /></Button>
+            <Button>
+              <MdThumbDown />
+            </Button>
+            <Button>
+              <MdThumbUp />
+            </Button>
           </Button.Group>
         </Row>
       </Card.Footer>

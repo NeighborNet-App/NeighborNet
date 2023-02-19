@@ -1,9 +1,27 @@
 import Head from "next/head";
 import IncidentCard from "@/components/IncidentCard";
 import MainNavbar from "@/components/MainNavbar";
-import { Button, Container, Navbar, Text, Spacer } from "@nextui-org/react";
+import {
+  Textarea,
+  Input,
+  Container,
+  Text,
+  Spacer,
+  Button,
+  Modal,
+} from "@nextui-org/react";
+import { firestore } from "./../firebase";
+import { useState, useEffect } from "react";
 
-export default function Feed() {
+export default function Incidents() {
+  // For Popup
+  const [visible, setVisible] = useState(false);
+  const handler = () => setVisible(true);
+  const closeHandler = () => {
+    setVisible(false);
+    console.log("closed");
+  };
+
   return (
     <>
       <Head>
@@ -15,8 +33,42 @@ export default function Feed() {
       <main>
         <div>
           <MainNavbar currentPage="incidents" />
-          <Container xs>
-            <Spacer y={2} />
+          <Container gap={28}>
+            <Spacer y={1} />
+            <Text h1>Recent Incidents</Text>
+            <Button auto color="primary" onPress={handler}>
+              {" "}
+              Report Incident{" "}
+            </Button>
+            <Modal
+              closeButton
+              blur
+              aria-labelledby="modal-title"
+              open={visible}
+              onClose={closeHandler}
+            >
+              <Modal.Header>
+                <Text id="modal-title" size={18}>
+                  {" "}
+                  Create Incident Report{" "}
+                </Text>
+              </Modal.Header>
+
+              <Modal.Body>
+                <Input bordered color="primary" fullWidth placeholder="Title" />
+                <Textarea bordered color="primary" placeholder="Description" />
+                <Input
+                  bordered
+                  color="primary"
+                  fullWidth
+                  placeholder="Location"
+                />
+                <Input fullWidth label="Time" type="time" />
+                <Input label="Date" type="date" />
+              </Modal.Body>
+            </Modal>
+
+            <Spacer y={1} />
             <IncidentCard />
             <Spacer y={1} />
             <IncidentCard />
