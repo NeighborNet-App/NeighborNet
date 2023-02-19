@@ -1,30 +1,25 @@
 import MainLogo from "@/components/MainLogo";
-import Link from "next/link";
-import React from "react";
-import { MdLock, MdEmail } from "react-icons/md";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import { useState } from "react";
+import { auth } from "@/firebase";
+import { UserContext } from "@/pages/_app";
 import {
+  Avatar,
   Button,
+  Dropdown,
+  Input,
+  Loading,
   Modal,
   Navbar,
-  Text,
-  Input,
-  Spacer,
-  Dropdown,
-  Avatar,
   Row,
+  Spacer,
+  Text,
   useInput,
-  Loading,
 } from "@nextui-org/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, firestore } from "@/firebase";
+import Link from "next/link";
 import { useRouter } from "next/router";
-
-interface User {
-  fullName: string;
-  avatarUrl?: string;
-}
+import React, { useContext, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { MdEmail, MdLock } from "react-icons/md";
 
 export default function MainNavbar() {
   const router = useRouter();
@@ -33,23 +28,7 @@ export default function MainNavbar() {
   const handler = () => setVisible(true);
 
   const [user] = useAuthState(auth);
-  const [userData, setUserData] = useState<User | null>(null);
-
-  const userDocRef = firestore
-    .collection("users")
-    .doc(auth.currentUser?.uid.toString());
-
-  if (user) {
-    userDocRef
-      .get()
-      .then((userDoc) => {
-        const userData = userDoc.data() as User;
-        setUserData(userData);
-      })
-      .catch((error) => {
-        console.error("Error getting document:", error);
-      });
-  }
+  const userData = useContext(UserContext);
 
   function signOut() {
     auth.signOut();
@@ -106,9 +85,7 @@ export default function MainNavbar() {
                 <>
                   {router.pathname != "/setup" ? (
                     <Link href={"/setup"} passHref legacyBehavior>
-                      <Navbar.Link>
-                        Sign Up
-                      </Navbar.Link>
+                      <Navbar.Link>Sign Up</Navbar.Link>
                     </Link>
                   ) : (
                     <></>

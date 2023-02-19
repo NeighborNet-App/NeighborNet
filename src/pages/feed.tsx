@@ -98,7 +98,7 @@ function EventModal(props: EventModalProps) {
         title: titleValue,
         description: descriptionValue,
         creationDate: Date.now(),
-        authorId: auth.currentUser?.getIdToken.toString(),
+        authorId: auth.currentUser?.uid,
       })
       .then((docRef) => {
         props.close();

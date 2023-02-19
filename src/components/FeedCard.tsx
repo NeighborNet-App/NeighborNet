@@ -6,6 +6,7 @@ import {
   Container,
   Spacer,
   Col,
+  Dropdown,
 } from "@nextui-org/react";
 import {
   MdLocationOn,
@@ -13,8 +14,10 @@ import {
   MdThumbUp,
   MdThumbDown,
 } from "react-icons/md";
+import { BsFillPencilFill } from "react-icons/bs";
 import UserProfile from "./UserProfile";
 import FeedItem from "@/types/FeedItem";
+import { auth } from "@/firebase";
 
 export default function FeedCard(props: FeedItem) {
   function convertDate(input: number): string {
@@ -33,7 +36,24 @@ export default function FeedCard(props: FeedItem) {
   return (
     <Card>
       <Card.Header>
-        <UserProfile></UserProfile>
+        <Row justify={"space-between"}>
+          <UserProfile></UserProfile>
+          {auth.currentUser?.uid == props.authorId ? (
+            <Dropdown>
+              <Dropdown.Button light>
+                <BsFillPencilFill />
+              </Dropdown.Button>
+              <Dropdown.Menu aria-label="Static Actions">
+                <Dropdown.Item key="edit">Edit Post</Dropdown.Item>
+                <Dropdown.Item key="delete" withDivider color="error">
+                  Delete Post
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            <></>
+          )}
+        </Row>
       </Card.Header>
       <Card.Divider />
       <Card.Body css={{ py: "$10" }}>

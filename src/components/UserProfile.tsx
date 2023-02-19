@@ -1,8 +1,8 @@
-import { Card, User, Text, Button, Row, Popover } from "@nextui-org/react";
+import { User, Text, Popover } from "@nextui-org/react";
 
 export default function UserProfile() {
   return (
-    <Popover>
+    <Popover isBordered>
       <Popover.Trigger>
         <User
           zoomed
@@ -12,7 +12,7 @@ export default function UserProfile() {
         />
       </Popover.Trigger>
       <Popover.Content>
-        <Text css={{ p: "$10" }}>Include Prior Events and Such Things</Text>
+        <Text css={{ p: "$10" }}>User profile goes here</Text>
       </Popover.Content>
     </Popover>
   );
