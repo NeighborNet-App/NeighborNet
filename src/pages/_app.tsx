@@ -1,14 +1,13 @@
 import MainNavbar from "@/components/MainNavbar";
-import { auth, firestore } from "@/firebase";
-import User from "@/types/User";
 import { createTheme, NextUIProvider } from "@nextui-org/react";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { AppProps } from "next/app";
-import { createContext, useEffect, useState } from "react";
 import { SSRProvider } from "react-bootstrap";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionOnce } from "react-firebase-hooks/firestore";
+import 'firebase/firestore';
+import 'firebase/auth';
+import { FuegoProvider } from '@nandorojo/swr-firestore';
+import { Fuego } from '@/feugo';
 
 const lightTheme = createTheme({
   type: "light",
@@ -18,26 +17,20 @@ const darkTheme = createTheme({
   type: "dark",
 });
 
-type UserContextType = User | null;
-export const UserContext = createContext<UserContextType>(null);
+const firebaseConfig = {
+  apiKey: "AIzaSyCfYc8koO2k2n5bWZf1vbLHD5hnAnahrX4",
+  authDomain: "neighbornet-64b3f.firebaseapp.com",
+  projectId: "neighbornet-64b3f",
+  storageBucket: "neighbornet-64b3f.appspot.com",
+  messagingSenderId: "682067984065",
+  appId: "1:682067984065:web:c8552099da349f0f059e40",
+}
+
+
+export const fuego = new Fuego(firebaseConfig)
+export const auth = fuego.auth()
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [user] = useAuthState(auth);
-  const [userData, setUserData] = useState<UserContextType>(null);
-
-  const userDocRef = firestore.collection("users").doc(user?.uid);
-
-  useEffect(() => {
-    console.log("test")
-    userDocRef.get().then((doc) => {
-      if (doc.exists) {
-        setUserData(doc.data() as User); // set state variable to the loaded document's data
-      } else {
-        console.log("No such document!");
-      }
-    });
-  });
-
   return (
     <SSRProvider>
       <NextThemesProvider
@@ -49,13 +42,11 @@ export default function App({ Component, pageProps }: AppProps) {
         }}
       >
         <NextUIProvider>
-          <>
-            <UserContext.Provider value={userData}>
-              <MainNavbar></MainNavbar>
-              <Component {...pageProps} />
-              <Analytics />
-            </UserContext.Provider>
-          </>
+          <FuegoProvider fuego={fuego}>
+            <MainNavbar></MainNavbar>
+            <Component {...pageProps} />
+            <Analytics />
+          </FuegoProvider>
         </NextUIProvider>
       </NextThemesProvider>
     </SSRProvider>

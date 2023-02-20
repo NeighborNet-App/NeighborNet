@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nandorojo/swr-firestore": "^0.16.0",
     "@next/font": "13.1.6",
     "@nextui-org/react": "^1.0.0-beta.12",
     "@types/node": "18.14.0",

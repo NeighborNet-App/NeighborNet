@@ -11,7 +11,7 @@ import {
   Modal,
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
-import { auth, firestore } from "@/firebase";
+import { auth } from "./_app";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Incidents() {

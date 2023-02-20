@@ -1,6 +1,7 @@
 import MainLogo from "@/components/MainLogo";
-import { auth } from "@/firebase";
-import { UserContext } from "@/pages/_app";
+import { auth } from "@/pages/_app";
+import User from "@/types/User";
+import { useDocument } from "@nandorojo/swr-firestore";
 import {
   Avatar,
   Button,
@@ -16,23 +17,24 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { MdEmail, MdLock } from "react-icons/md";
 
+
 export default function MainNavbar() {
   const router = useRouter();
-  // For Popup
+  // // For Popup
   const [visible, setVisible] = useState(false);
   const handler = () => setVisible(true);
 
   const [user] = useAuthState(auth);
-  const userData = useContext(UserContext);
 
   function signOut() {
     auth.signOut();
   }
+  const { data: userData, update: updateUserData, error: userDataError } = useDocument<User>(`users/${auth.currentUser?.uid}`)
 
   return (
     <Navbar variant={"sticky"}>
@@ -84,11 +86,11 @@ export default function MainNavbar() {
               ) : (
                 <>
                   {router.pathname != "/setup" ? (
-                    <Link href={"/setup"} passHref legacyBehavior>
-                      <Navbar.Link>Sign Up</Navbar.Link>
+                    <Link href={"/setup"}>
+                      Sign Up
                     </Link>
                   ) : (
-                    <></>
+                    <Text></Text>
                   )}
                   <Spacer x={0.5} />
                   <Button auto onPress={handler}>
@@ -205,11 +207,11 @@ function LoginModal(props: LoginModalProps) {
     setLoading(true);
     auth
       .signInWithEmailAndPassword(emailValue, passwordValue)
-      .then((item) => {
+      .then((_item: any) => {
         setLoading(false);
         closeHandler();
       })
-      .catch((error) => {
+      .catch((error: any) => {
         alert(error);
       });
   };
@@ -281,7 +283,7 @@ function LoginModal(props: LoginModalProps) {
             {loading ? (
               <Loading type="default" color="currentColor" size="sm" />
             ) : (
-              <>Sign in</>
+              <div>Sign in</div>
             )}
           </Button>
         </Row>

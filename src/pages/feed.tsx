@@ -1,5 +1,7 @@
 import FeedCard from "@/components/FeedCard";
-import { auth, firestore } from "@/firebase";
+import { auth } from "@/pages/_app";
+import FeedItem from "@/types/FeedItem";
+import { useCollection } from "@nandorojo/swr-firestore";
 import {
   Button,
   Container,
@@ -15,18 +17,17 @@ import {
 import Head from "next/head";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 
 export default function Feed() {
-  const feedRef = firestore.collection("feed");
-  const query = feedRef.orderBy("creationDate", "desc").limit(50);
 
-  const [feedList] = useCollectionData(query, { idField: "id" });
   const [user] = useAuthState(auth);
-
+  const { data: feedList, error: feedListError } = useCollection<FeedItem>('feed',  {listen: true })
+  console.log(feedList)
+  console.log(feedListError)
   // Popup
   const [visible, setVisible] = React.useState(false);
   const handler = () => setVisible(true);
+  
   const closeHandler = () => {
     setVisible(false);
     console.log("closed");
@@ -59,16 +60,13 @@ export default function Feed() {
             {feedList &&
               feedList.map((item) => {
                 return (
-                  <>
                     <FeedCard
-                      key={item["id"]}
-                      creationDate={item["creationDate"]}
-                      title={item["title"]}
-                      description={item["description"]}
-                      authorId={item["authorId"]}
+                      key={item.id}
+                      creationDate={item.creationDate}
+                      title={item.title}
+                      description={item.description}
+                      authorId={item.authorId}
                     />
-                    <Spacer y={1} />
-                  </>
                 );
               })}
           </Container>
@@ -92,26 +90,26 @@ function EventModal(props: EventModalProps) {
   }
 
   function uploadDocument() {
-    firestore
-      .collection("feed")
-      .add({
-        title: titleValue,
-        description: descriptionValue,
-        creationDate: Date.now(),
-        authorId: auth.currentUser?.uid,
-      })
-      .then((docRef) => {
-        props.close();
-        setTimeout(function () {
-          setDisableSubmit(false);
-        }, 750);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-        setTimeout(function () {
-          setDisableSubmit(false);
-        }, 750);
-      });
+    // firestore
+    //   .collection("feed")
+    //   .add({
+    //     title: titleValue,
+    //     description: descriptionValue,
+    //     creationDate: Date.now(),
+    //     authorId: auth.currentUser?.uid,
+    //   })
+    //   .then((docRef: any) => {
+    //     props.close();
+    //     setTimeout(function () {
+    //       setDisableSubmit(false);
+    //     }, 750);
+    //   })
+    //   .catch((error: any) => {
+    //     console.error("Error adding document: ", error);
+    //     setTimeout(function () {
+    //       setDisableSubmit(false);
+    //     }, 750);
+    //   });
   }
 
   const [disableSubmit, setDisableSubmit] = useState(false);
