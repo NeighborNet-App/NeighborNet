@@ -1,9 +1,16 @@
 import Head from "next/head";
-import FeedCard from "@/components/FeedCard";
+import MapboxMap from "@/components/MapboxMap";
 import MainNavbar from "@/components/MainNavbar";
 import { Button, Container, Navbar, Text, Spacer } from "@nextui-org/react";
+import "mapbox-gl/dist/mapbox-gl.css";
+//import "./styles/Home.module.css";
+import { useEffect, useRef, useState } from "react";
+import { Switch, useTheme } from '@nextui-org/react'
+
+
 
 export default function Feed() {
+  
   return (
     <>
       <Head>
@@ -13,12 +20,9 @@ export default function Feed() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div>
-          <Container xs>
-            <Text>Hello Map</Text>
-          </Container>
-        </div>
+        <MapboxMap />
       </main>
     </>
   );
 }
+

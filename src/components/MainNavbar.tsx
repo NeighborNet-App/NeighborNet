@@ -1,7 +1,8 @@
 import MainLogo from "@/components/MainLogo";
 import { auth } from "@/pages/_app";
+import FeedItem from "@/types/FeedItem";
 import User from "@/types/User";
-import { useDocument } from "@nandorojo/swr-firestore";
+import { useCollection, useDocument } from "@nandorojo/swr-firestore";
 import {
   Avatar,
   Button,
@@ -21,20 +22,41 @@ import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { MdEmail, MdLock } from "react-icons/md";
-
+import ImageUploading, { ImageListType } from "react-images-uploading";
 
 export default function MainNavbar() {
   const router = useRouter();
-  // // For Popup
+  // For Popup
+  const [profileVisible, setProfileVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const handler = () => setVisible(true);
-
+  const closeHandler = () => {
+    setVisible(false);
+    setProfileVisible(false);
+    console.log("closed");
+  };
   const [user] = useAuthState(auth);
 
   function signOut() {
     auth.signOut();
   }
-  const { data: userData, update: updateUserData, error: userDataError } = useDocument<User>(`users/${auth.currentUser?.uid}`)
+  const {
+    data: userData,
+    update: updateUserData,
+    error: userDataError,
+  } = useDocument<User>(`users/${auth.currentUser?.uid}`);
+
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 1;
+
+  const onChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList as never[]);
+  };
 
   return (
     <Navbar variant={"sticky"}>
@@ -54,16 +76,76 @@ export default function MainNavbar() {
         <Link href={"/feed"} passHref legacyBehavior>
           <Navbar.Link isActive={router.pathname == "/feed"}>Feed</Navbar.Link>
         </Link>
-        <Link href={"/incidents"} passHref legacyBehavior>
-          <Navbar.Link isActive={router.pathname == "/incidents"}>
-            Incidents
-          </Navbar.Link>
-        </Link>
         <Link href={"/map"} passHref legacyBehavior>
           <Navbar.Link isActive={router.pathname == "/map"}>Map</Navbar.Link>
         </Link>
       </Navbar.Content>
       <LoginModal visible={visible} setVisible={setVisible} />
+      <Modal
+        closeButton
+        aria-labelledby="modal-title"
+        open={profileVisible}
+        onClose={closeHandler}
+      >
+        <Modal.Header>
+          <Text id="modal-title" size={18}>
+            Edit Profile
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Row justify="center">
+            <ImageUploading
+              multiple
+              value={images}
+              onChange={onChange}
+              maxNumber={maxNumber}
+            >
+              {({
+                imageList,
+                onImageUpload,
+                onImageRemoveAll,
+                onImageUpdate,
+                onImageRemove,
+                isDragging,
+                dragProps,
+              }) => (
+                // write your building UI
+                <div className="upload__image-wrapper">
+                  <button
+                    style={isDragging ? { color: "red" } : undefined}
+                    onClick={onImageUpload}
+                    {...dragProps}
+                  >
+                    Click or Drop here
+                  </button>
+                  {imageList.map((image, index) => (
+                    <div key={index} className="image-item">
+                      <img src={image.dataURL} alt="" width="100" />
+                      <div className="image-item__btn-wrapper">
+                        <button onClick={() => onImageUpdate(index)}>
+                          Update
+                        </button>
+                        <button onClick={() => onImageRemove(index)}>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ImageUploading>
+          </Row>
+
+          <Input
+            bordered
+            fullWidth
+            color="primary"
+            size="lg"
+            label="Username"
+            initialValue={userData?.fullName}
+          />
+        </Modal.Body>
+      </Modal>
       <Navbar.Content>
         <Dropdown placement="bottom-right">
           <Navbar.Item>
@@ -86,9 +168,7 @@ export default function MainNavbar() {
               ) : (
                 <>
                   {router.pathname != "/setup" ? (
-                    <Link href={"/setup"}>
-                      Sign Up
-                    </Link>
+                    <Link href={"/setup"}>Sign Up</Link>
                   ) : (
                     <Text></Text>
                   )}
@@ -107,6 +187,8 @@ export default function MainNavbar() {
             onAction={(actionKey) => {
               if (actionKey.toString() == "logout") {
                 signOut();
+              } else if (actionKey.toString() == "editProfile") {
+                setProfileVisible(true);
               }
             }}
           >
@@ -118,7 +200,7 @@ export default function MainNavbar() {
                 {userData?.fullName}
               </Text>
             </Dropdown.Item>
-            <Dropdown.Item key="settings" withDivider>
+            <Dropdown.Item key="editProfile" withDivider>
               My Profile
             </Dropdown.Item>
             <Dropdown.Item key="system">My Posts</Dropdown.Item>
@@ -140,11 +222,6 @@ export default function MainNavbar() {
         <Navbar.CollapseItem key={"feed"}>
           <Link color="inherit" href="/feed">
             Feed
-          </Link>
-        </Navbar.CollapseItem>
-        <Navbar.CollapseItem key={"incidents"}>
-          <Link color="inherit" href="/incidents">
-            Incidents
           </Link>
         </Navbar.CollapseItem>
         <Navbar.CollapseItem key={"map"}>

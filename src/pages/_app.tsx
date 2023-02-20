@@ -29,6 +29,7 @@ const firebaseConfig = {
 
 export const fuego = new Fuego(firebaseConfig)
 export const auth = fuego.auth()
+export const db = fuego.db
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

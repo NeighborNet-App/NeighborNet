@@ -1,14 +1,17 @@
-import { User, Text, Popover } from "@nextui-org/react";
+import { User as UserUI, Text, Popover } from "@nextui-org/react";
 
-export default function UserProfile() {
+import User from "@/types/User";
+import { userAgent } from "next/server";
+
+export default function UserProfile(props: User) {
   return (
     <Popover isBordered>
       <Popover.Trigger>
-        <User
+        <UserUI
           zoomed
           pointer
-          src="https://i.pravatar.cc/150?u=a048581f4e29026701d"
-          name="William Howard"
+          src={props.avatarUrl ? props.avatarUrl : "https://i.pravatar.cc/150?u=a048581f4e29026701d"}
+          name={props.fullName}
         />
       </Popover.Trigger>
       <Popover.Content>

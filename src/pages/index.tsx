@@ -2,8 +2,24 @@ import Head from "next/head";
 import MainNavbar from "@/components/MainNavbar";
 import { Container, Row, Text, Spacer } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
+import { useCollection } from "@nandorojo/swr-firestore";
+import FeedItem from "@/types/FeedItem";
 
 export default function Home() {
+  const {
+    data: feedList,
+    loading,
+    error: feedListError,
+    add,
+    mutate
+  } = useCollection<FeedItem>(
+    "feed",
+    {
+      orderBy: ["creationDate", "desc"],
+      listen: true,
+      
+    }
+  );
   const imageSize = 150;
   return (
     <>

@@ -18,10 +18,16 @@ import { BsFillPencilFill } from "react-icons/bs";
 import UserProfile from "./UserProfile";
 import FeedItem from "@/types/FeedItem";
 import { auth } from "@/pages/_app";
+import { db } from "@/pages/_app";
 
-export default function FeedCard(props: FeedItem) {
-  function convertDate(input: number): string {
-    const date = new Date(input);
+interface FeedCardInterface {
+  id: string;
+  item: FeedItem;
+}
+
+export default function FeedCard(props: FeedCardInterface) {
+  function convertDate(input: number | undefined): string {
+    const date = new Date(input ?? 0);
     return `${date.toLocaleDateString("en-us", {
       year: "numeric",
       month: "short",
@@ -33,27 +39,44 @@ export default function FeedCard(props: FeedItem) {
     })}`;
   }
 
+  function removePost() {
+    db.doc(`feed/${props.id}`).delete();
+  }
+
   return (
     <>
       <Card>
         <Card.Header>
-          <Row justify={"space-between"}>
-            <UserProfile></UserProfile>
-            {auth.currentUser?.uid == props.authorId ? (
-              <Dropdown>
-                <Dropdown.Button light>
-                  <BsFillPencilFill />
-                </Dropdown.Button>
-                <Dropdown.Menu aria-label="Static Actions">
-                  <Dropdown.Item key="edit">Edit Post</Dropdown.Item>
-                  <Dropdown.Item key="delete" withDivider color="error">
-                    Delete Post
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            ) : (
-              <></>
-            )}
+          <Row justify={"space-between"} align="center">
+            <UserProfile
+              fullName={props.item.author.fullName}
+              avatarUrl={props.item.author.avatarUrl}
+            ></UserProfile>
+            <>
+              {props.item.eventType == "incident" ? <Text color={"error"} b>Incident</Text> : <></>}
+              {auth.currentUser?.uid == props.item.authorId ? (
+                <Dropdown>
+                  <Dropdown.Button light>
+                    <BsFillPencilFill />
+                  </Dropdown.Button>
+                  <Dropdown.Menu
+                    aria-label="Static Actions"
+                    onAction={(actionKey) => {
+                      if (actionKey.toString() == "delete") {
+                        removePost();
+                      }
+                    }}
+                  >
+                    <Dropdown.Item key="edit">Edit Post</Dropdown.Item>
+                    <Dropdown.Item key="delete" withDivider color="error">
+                      Delete Post
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              ) : (
+                <></>
+              )}
+            </>
           </Row>
         </Card.Header>
         <Card.Divider />
@@ -61,28 +84,28 @@ export default function FeedCard(props: FeedItem) {
           <Container>
             <Col>
               <Text h3 b>
-                {props.title}
+                {props.item.title}
               </Text>
-              {props.address != null ? (
+              {props.item.address != null ? (
                 <Row align="center">
                   <MdLocationOn />
                   <Spacer x={0.35} />
-                  <Text b>{props.address.streetAddress}</Text>
+                  <Text b>{props.item.address.streetAddress}</Text>
                 </Row>
               ) : (
                 <></>
               )}
-              {props.eventTime != null ? (
+              {props.item.eventTime != null ? (
                 <Row align="center">
                   <MdCalendarToday />
                   <Spacer x={0.35} />
-                  <Text>{convertDate(props.eventTime)}</Text>
+                  <Text>{convertDate(props.item.eventTime)}</Text>
                 </Row>
               ) : (
                 <></>
               )}
               <Spacer y={0.4} />
-              <Text>{props.description}</Text>
+              <Text>{props.item.description}</Text>
             </Col>
           </Container>
         </Card.Body>
@@ -92,7 +115,7 @@ export default function FeedCard(props: FeedItem) {
             <Row>
               <Spacer x={0.5} />
               <Text css={{ opacity: "0.33" }} size={"$sm"} color="">
-                {convertDate(props.creationDate)}
+                {convertDate(props.item.creationDate)}
               </Text>
             </Row>
             <Button.Group color="primary" size="sm" flat>
