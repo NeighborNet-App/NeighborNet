@@ -1,13 +1,8 @@
-import Head from "next/head";
-import FeedCard from "@/components/FeedCard";
-import MainNavbar from "@/components/MainNavbar";
-import { Button, Container, Navbar, Text, Spacer } from "@nextui-org/react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCollection } from "@nandorojo/swr-firestore";
 import { useEffect, useRef, useState } from "react";
-import { Switch, useTheme } from "@nextui-org/react";
-import React from "react";
+import { useTheme } from "@nextui-org/react";
 
 export default function MapboxMap() {
   const token =

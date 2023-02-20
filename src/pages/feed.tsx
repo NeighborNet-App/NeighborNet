@@ -79,6 +79,7 @@ export default function Feed() {
                       authorId: item.authorId,
                       author: item.author,
                       eventType: item.eventType,
+                      imageUrl: item.imageUrl
                     }}
                   />
                 );

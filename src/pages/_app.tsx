@@ -25,7 +25,7 @@ const firebaseConfig = {
   messagingSenderId: "682067984065",
   appId: "1:682067984065:web:c8552099da349f0f059e40",
 }
-
+import '@/styles/globals.css'
 
 export const fuego = new Fuego(firebaseConfig)
 export const auth = fuego.auth()

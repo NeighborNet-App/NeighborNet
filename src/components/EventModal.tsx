@@ -135,10 +135,10 @@ export default function EventModal(props: EventModalProps) {
         <Container>
           <Checkbox
             isSelected={isIncident}
-            color="success"
+            color="primary"
             onChange={setIsIncident}
           >
-            Incident Type
+            Is Incident?
           </Checkbox>
           <Input
             {...titleBindings}

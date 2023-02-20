@@ -54,13 +54,22 @@ export default function FeedCard(props: FeedCardInterface) {
               fullName={props.item.author.fullName}
               avatarUrl={props.item.author.avatarUrl}
             ></UserProfile>
-            <>
+            <div
+              style={{ display: "flex", flexDirection: "row" }}
+            >
               {props.item.eventType == "incident" ? (
-                <Text color={"error"} b>
-                  Incident
-                </Text>
+                <Button flat auto rounded color="warning">
+                  <Text
+                    css={{ color: "inherit" }}
+                    size={12}
+                    weight="bold"
+                    transform="uppercase"
+                  >
+                    Incident
+                  </Text>
+                </Button>
               ) : (
-                <></>
+                <div></div>
               )}
               {auth.currentUser?.uid == props.item.authorId ? (
                 <Dropdown>
@@ -82,15 +91,14 @@ export default function FeedCard(props: FeedCardInterface) {
                   </Dropdown.Menu>
                 </Dropdown>
               ) : (
-                <></>
+                <div></div>
               )}
-            </>
+            </div>
           </Row>
         </Card.Header>
         <Card.Divider />
         <Card.Body css={{ py: "$10" }}>
           <Container>
-            <Col>
               <Text h3 b>
                 {props.item.title}
               </Text>
@@ -112,16 +120,18 @@ export default function FeedCard(props: FeedCardInterface) {
               ) : (
                 <></>
               )}
-              <Container>
+              <Container gap={0}>
                 {props.item.imageUrl ? (
-                  <Row gap={2}>
+                  <Row gap={0}>
                     <Col>
                       <Image
-                        css={{ borderRadius: "10px" }}
+                        objectFit="cover"
+                        css={{ borderRadius: "15px" }}
                         src={props.item.imageUrl}
                         alt="Default Image"
                       />
                     </Col>
+                    <Spacer y={1} />
                     <Col>
                       <Text>{props.item.description}</Text>
                     </Col>
@@ -131,7 +141,6 @@ export default function FeedCard(props: FeedCardInterface) {
                 )}
               </Container>
               <Spacer y={0.4} />
-            </Col>
           </Container>
         </Card.Body>
         <Card.Divider />

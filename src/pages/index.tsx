@@ -17,7 +17,7 @@ export default function Home() {
     {
       orderBy: ["creationDate", "desc"],
       listen: true,
-      
+
     }
   );
   const imageSize = 150;
