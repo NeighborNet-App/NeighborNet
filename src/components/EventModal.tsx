@@ -17,10 +17,7 @@ import {
   Container,
 } from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
-import {
-  AddressAutofill,
-  config
-} from "@mapbox/search-js-react";
+import { AddressAutofill, config } from "@mapbox/search-js-react";
 
 interface EventModalProps {
   open: boolean;
@@ -52,17 +49,21 @@ export default function EventModal(props: EventModalProps) {
           fullName: userData!.fullName,
           avatarUrl: userData?.avatarUrl,
         },
-        address: locationValue != "" ? {
-          latitude: latitude,
-          longitude: longitude,
-          streetAddress: locationValue,
-          city: city,
-          country: country
-        } : undefined,
+        address:
+          locationValue != ""
+            ? {
+                latitude: latitude,
+                longitude: longitude,
+                streetAddress: locationValue,
+                city: city,
+                country: country,
+              }
+            : undefined,
         eventType: isIncident ? "incident" : "regular",
       })
       ?.then(() => {
         props.close();
+        resetFields()
         setTimeout(function () {
           setDisableSubmit(false);
         }, 750);
@@ -108,10 +109,10 @@ export default function EventModal(props: EventModalProps) {
     bindings: locationBindings,
   } = useInput("");
 
-  const [latitude, setLatitude] = useState(0)
-  const [longitude, setLongitude] = useState(0)
-  const [city, setCity] = useState('')
-  const [country, setCountry] = useState('')
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   //Mapbox
   const token =
     "pk.eyJ1IjoibGVvc20wNyIsImEiOiJjbGVicjdueHgxMmoxM25xZ2JqZWVkbTFjIn0.nv1GEej-EtMR1ouVUYVM_w";
@@ -120,14 +121,29 @@ export default function EventModal(props: EventModalProps) {
     config.accessToken = token;
   }, []);
 
-  const handleRetrieve = useCallback((res: any) => {
-    console.log(res.features[0].properties);
-    setLocationValue(res.features[0].properties.feature_name)
-    setLatitude(res.features[0].geometry.coordinates[1])
-    setLongitude(res.features[0].geometry.coordinates[0])
-    setCity(res.features[0].properties.address_level2)
-    setCountry(res.features[0].properties.country)
-  }, [setLocationValue]);
+  const handleRetrieve = useCallback(
+    (res: any) => {
+      console.log(res.features[0].properties);
+      setLocationValue(res.features[0].properties.feature_name);
+      setLatitude(res.features[0].geometry.coordinates[1]);
+      setLongitude(res.features[0].geometry.coordinates[0]);
+      setCity(res.features[0].properties.address_level2);
+      setCountry(res.features[0].properties.country);
+    },
+    [setLocationValue]
+  );
+
+  const resetFields = () => {
+    resetTitle()
+    resetDescription()
+    resetLocation()
+    setLatitude(0)
+    setLongitude(0)
+    setCity("")
+    setCountry("")
+    resetTime()
+    resetDate()
+  }
 
   return (
     <Collapse.Group bordered>
@@ -145,15 +161,28 @@ export default function EventModal(props: EventModalProps) {
             bordered
             color="primary"
             fullWidth
-            label="Title"
+            label="Title (Required)"
           />
           <Textarea
             {...descriptionBindings}
             bordered
             color="primary"
             fullWidth
-            label="Description"
+            label="Description (Required)"
           />
+          <AddressAutofill accessToken={token} onRetrieve={handleRetrieve}>
+            <Input
+              {...locationBindings}
+              bordered
+              color="primary"
+              fullWidth
+              label="Location (Required)"
+              name="address"
+              placeholder="Address"
+              type="text"
+              autoComplete="address-line1"
+            />
+          </AddressAutofill>
           <Row>
             <Input
               {...dateBindings}
@@ -173,25 +202,13 @@ export default function EventModal(props: EventModalProps) {
               type="time"
             />
           </Row>
-          <AddressAutofill accessToken={token} onRetrieve={handleRetrieve}>
-            <Input
-              {...locationBindings}
-              bordered
-              color="primary"
-              fullWidth
-              label="Location (Optional)"
-              name="address"
-              placeholder="Address"
-              type="text"
-              autoComplete="address-line1"
-              
-            />
-          </AddressAutofill>
+
           <Spacer y={1} />
           <Button
             disabled={
               titleValue.length < 4 ||
               descriptionValue.length < 4 ||
+              locationValue.length < 3 ||
               disableSubmit
             }
             onPress={handleSubmit}
