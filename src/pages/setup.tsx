@@ -1,4 +1,4 @@
-import { auth, firestore } from "@/firebase";
+import { auth } from "./_app";
 import {
   Button,
   Container,
@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { MdEmail, MdLock, MdPerson } from "react-icons/md";
 import { useRouter } from "next/router";
+import { set } from '@nandorojo/swr-firestore'
 
 export default function Feed() {
   const router = useRouter();
@@ -86,18 +87,11 @@ export default function Feed() {
   };
 
   function uploadUserData(uid: string) {
-    firestore
-      .collection("users")
-      .doc(uid).set({
-          fullName: nameValue,
-          avatarUrl: "https://evascursos.com.br/wp-content/uploads/2020/03/avatar-large-square.jpg"
-      })
-      .then((docRef) => {
-        Cleanup()
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
+    set(`users/${auth.currentUser?.uid}`, {
+      fullName: nameValue,
+      avatarUrl: "https://evascursos.com.br/wp-content/uploads/2020/03/avatar-large-square.jpg"
+    })
+    Cleanup()
   }
 
   function Cleanup() {

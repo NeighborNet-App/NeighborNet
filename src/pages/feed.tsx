@@ -21,7 +21,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 export default function Feed() {
 
   const [user] = useAuthState(auth);
-  const { data: feedList, error: feedListError } = useCollection<FeedItem>('feed',  {listen: true })
+  const { data: feedList, error: feedListError } = useCollection<FeedItem>('feed')
   console.log(feedList)
   console.log(feedListError)
   // Popup
