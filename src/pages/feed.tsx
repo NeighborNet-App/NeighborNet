@@ -29,11 +29,7 @@ export default function Feed() {
   // Popup
   const [visible, setVisible] = React.useState(false);
   const handler = () => setVisible(true);
-  //Mapbox
-
-  const token =
-    "pk.eyJ1IjoibGVvc20wNyIsImEiOiJjbGVicjdueHgxMmoxM25xZ2JqZWVkbTFjIn0.nv1GEej-EtMR1ouVUYVM_w";
-
+  
   const closeHandler = () => {
     setVisible(false);
     console.log("closed");

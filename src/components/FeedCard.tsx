@@ -7,6 +7,8 @@ import {
   Spacer,
   Col,
   Dropdown,
+  Image,
+  Grid,
 } from "@nextui-org/react";
 import {
   MdLocationOn,
@@ -53,7 +55,13 @@ export default function FeedCard(props: FeedCardInterface) {
               avatarUrl={props.item.author.avatarUrl}
             ></UserProfile>
             <>
-              {props.item.eventType == "incident" ? <Text color={"error"} b>Incident</Text> : <></>}
+              {props.item.eventType == "incident" ? (
+                <Text color={"error"} b>
+                  Incident
+                </Text>
+              ) : (
+                <></>
+              )}
               {auth.currentUser?.uid == props.item.authorId ? (
                 <Dropdown>
                   <Dropdown.Button light>
@@ -104,8 +112,25 @@ export default function FeedCard(props: FeedCardInterface) {
               ) : (
                 <></>
               )}
+              <Container>
+                {props.item.imageUrl ? (
+                  <Row gap={2}>
+                    <Col>
+                      <Image
+                        css={{ borderRadius: "10px" }}
+                        src={props.item.imageUrl}
+                        alt="Default Image"
+                      />
+                    </Col>
+                    <Col>
+                      <Text>{props.item.description}</Text>
+                    </Col>
+                  </Row>
+                ) : (
+                  <Text>{props.item.description}</Text>
+                )}
+              </Container>
               <Spacer y={0.4} />
-              <Text>{props.item.description}</Text>
             </Col>
           </Container>
         </Card.Body>

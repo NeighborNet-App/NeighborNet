@@ -14,7 +14,7 @@ export default interface FeedItem {
   description: string;
   authorId: string;
   author: User;
-  imageURL?: string;
+  imageUrl?: string;
   address?: ItemLocation;
   eventTime?: number;
   eventType: string;

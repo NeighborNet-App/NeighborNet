@@ -52,13 +52,13 @@ export default function EventModal(props: EventModalProps) {
           fullName: userData!.fullName,
           avatarUrl: userData?.avatarUrl,
         },
-        address: {
+        address: locationValue != "" ? {
           latitude: latitude,
           longitude: longitude,
           streetAddress: locationValue,
           city: city,
           country: country
-        },
+        } : undefined,
         eventType: isIncident ? "incident" : "regular",
       })
       ?.then(() => {
@@ -127,7 +127,7 @@ export default function EventModal(props: EventModalProps) {
     setLongitude(res.features[0].geometry.coordinates[0])
     setCity(res.features[0].properties.address_level2)
     setCountry(res.features[0].properties.country)
-  }, []);
+  }, [setLocationValue]);
 
   return (
     <Collapse.Group bordered>
